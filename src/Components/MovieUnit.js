@@ -1,10 +1,13 @@
+import { Link } from "react-router-dom";
 import styled from "styled-components";
-const MovieUnit = ({ Poster, Title, Year }) => {
+const MovieUnit = ({ Poster, Title, Year, index }) => {
   return (
     <MovieUnitContainer>
       <img src={Poster} alt={Title} />
       <MovieDatalis>
-        <h3>{Title}</h3>
+        <h3>
+          <Link to={`/movies/${index}`}>{Title}</Link>
+        </h3>
         <h3>
           <span>{Year}</span>
         </h3>
@@ -17,7 +20,8 @@ export default MovieUnit;
 
 const MovieUnitContainer = styled.div`
   width: 100%;
-  border: 2px solid red;
+  box-shadow: rgba(0, 0, 0, 0.95) 0px 13px 27px -5px,
+    rgba(0, 0, 0, 1) 0px 8px 16px -8px;
 
   img {
     width: 100%;
@@ -26,6 +30,7 @@ const MovieUnitContainer = styled.div`
 `;
 
 const MovieDatalis = styled.div`
+  padding: 10px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -33,8 +38,9 @@ const MovieDatalis = styled.div`
 
   h3 {
     font-size: 14px;
+    font-weight: 500;
     span {
-      color: red;
+      color: #fca103;
     }
   }
 `;
