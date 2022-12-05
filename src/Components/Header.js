@@ -8,7 +8,9 @@ const Header = () => {
   return (
     <HeaderContainer>
       <HeaderLeft>
-        <h1>Movies Books App</h1>
+        <Link to="/">
+          <h1>Movies Books App</h1>
+        </Link>
       </HeaderLeft>
       <HeaderRight>
         <ul>
@@ -86,6 +88,7 @@ const HeaderContainer = styled.header`
 
 const HeaderLeft = styled.div`
   h1 {
+    color: black;
     font-size: 16px;
     font-weight: 700;
   }

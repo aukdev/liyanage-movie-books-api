@@ -6,6 +6,7 @@ import Movies from "./Pages/Movies";
 import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
 import BookPage from "./Pages/BookPage";
+import Home from "./Pages/Home";
 
 const App = () => {
   return (
@@ -29,6 +30,9 @@ const App = () => {
         </Route>
         <Route exact path="/signup">
           <Signup />
+        </Route>
+        <Route exact path="/">
+          <Home />
         </Route>
       </Switch>
     </Router>
