@@ -17,10 +17,7 @@ const Payment = ({ setPaymentSet }) => {
     <PaymentContainer>
       <PaymentContainerBody>
         <h1>Payment Details</h1>
-        <img
-          src="https://www.freepnglogos.com/uploads/visa-and-mastercard-logo-26.png"
-          alt="payment-method"
-        />
+        <img src="/image/payment.png" alt="payment-method" />
         <PaymentForm onSubmit={paymentHandle}>
           <PaymentFormInputBox>
             <p>Card Holder Name</p>
