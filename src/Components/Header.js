@@ -18,6 +18,12 @@ const Header = () => {
           <li>
             <Link to="/books">Books</Link>
           </li>
+          <li>
+            <Link to="/login">Log in</Link>
+          </li>
+          <li>
+            <Link to="/signup">Sign Up</Link>
+          </li>
         </ul>
 
         <img
@@ -145,7 +151,7 @@ const HeaderRight = styled.nav`
       transition: all 350ms ease-in;
 
       &:hover {
-        color: white;
+        color: black;
       }
     }
 
