@@ -67,13 +67,15 @@ const HeaderContainer = styled.header`
   top: 0;
   left: 0;
   z-index: 100;
-  background-color: #f7f3eb;
+  background-color: #fff;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px,
+    rgba(0, 0, 0, 0.22) 0px 15px 12px;
   width: 100%;
   padding: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: #fca103;
+  color: black;
 `;
 
 const HeaderLeft = styled.div`
@@ -103,6 +105,8 @@ const HeaderRight = styled.nav`
     right: -22px;
     padding: 15px;
     background-color: #fca103;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px,
+      rgba(0, 0, 0, 0.22) 0px 15px 12px;
     transition: all 400ms ease-in;
 
     img {

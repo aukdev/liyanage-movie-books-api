@@ -1,25 +1,25 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-const MovieUnit = ({ Poster, Title, Year, index }) => {
+const BookUnit = ({ Poster, Title, Year, index }) => {
   return (
-    <MovieUnitContainer>
+    <BookUnitContainer>
       <img src={Poster} alt={Title} />
-      <MovieDatalis>
+      <BookDatalis>
         <h3>
-          <Link to={`/movie/${index}`}>{Title}</Link>
+          <Link to={`/book/${index}`}>{Title}</Link>
         </h3>
         <h3>
           <span>{Year}</span>
         </h3>
-      </MovieDatalis>
-    </MovieUnitContainer>
+      </BookDatalis>
+    </BookUnitContainer>
   );
 };
 
-export default MovieUnit;
+export default BookUnit;
 
-const MovieUnitContainer = styled.div`
+const BookUnitContainer = styled.div`
   width: 100%;
   box-shadow: rgba(0, 0, 0, 0.95) 0px 13px 27px -5px,
     rgba(0, 0, 0, 1) 0px 8px 16px -8px;
@@ -30,7 +30,7 @@ const MovieUnitContainer = styled.div`
   }
 `;
 
-const MovieDatalis = styled.div`
+const BookDatalis = styled.div`
   padding: 10px;
   width: 100%;
   display: flex;

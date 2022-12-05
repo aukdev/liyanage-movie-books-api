@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import MovieUnit from "../Components/MovieUnit";
-import moveiApiData from "../db/book";
+import moveiApiData from "../db/movies";
 
 const Movies = () => {
   return (

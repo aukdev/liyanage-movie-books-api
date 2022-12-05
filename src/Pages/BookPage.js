@@ -2,14 +2,14 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import Payment from "../Components/Payment";
-import movieApiData from "../db/movies";
+import bookApiData from "../db/books";
 
-const MoviePage = () => {
+const BookPage = () => {
   const [commentInput, setCommentInput] = useState("");
   const [paymentSet, setPaymentSet] = useState(false);
 
   const { id } = useParams();
-  const { Title, Description, Poster } = movieApiData[id];
+  const { Title, Description, Poster } = bookApiData[id];
 
   const reviews = [
     {
@@ -41,30 +41,30 @@ const MoviePage = () => {
   };
 
   return (
-    <MoviePageContainer>
+    <BookPageContainer>
       {paymentSet && <Payment setPaymentSet={setPaymentSet} />}
-      <MoviePageMainImage>
-        <img src={Poster} alt="movie" />
-      </MoviePageMainImage>
-      <MoviePageMovieDetails>
+      <BookPageMainImage>
+        <img src={Poster} alt="book" />
+      </BookPageMainImage>
+      <BookPageMovieDetails>
         <h1>{Title}</h1>
         <p>{Description}</p>
 
-        <MoviePageWatchButton>
+        <BookPageWatchButton>
           <button
             onClick={() => {
               setPaymentSet((pre) => !pre && true);
             }}
           >
-            Watch ($5)
+            Order ($5)
           </button>
-        </MoviePageWatchButton>
-      </MoviePageMovieDetails>
+        </BookPageWatchButton>
+      </BookPageMovieDetails>
 
-      <MoviePageReviews>
+      <BookPageReviews>
         <h2>User Reviews</h2>
-        <MoviePageCommentSubmit onSubmit={commentSubmitHandle}>
-          <MoviePageCommentInput
+        <BookPageCommentSubmit onSubmit={commentSubmitHandle}>
+          <BookPageCommentInput
             type="text"
             value={commentInput}
             onChange={(e) => {
@@ -73,25 +73,25 @@ const MoviePage = () => {
             }}
             placeholder="Your Comment"
           />
-          <MoviePageCommentButton type="submit">Comment</MoviePageCommentButton>
-        </MoviePageCommentSubmit>
+          <BookPageCommentButton type="submit">Comment</BookPageCommentButton>
+        </BookPageCommentSubmit>
         {reviews?.map(({ user, comment, date }, index) => (
-          <MoviePageComments key={index}>
+          <BookPageComments key={index}>
             <h5>
               <span>{user}</span>
               <span>{date}</span>
             </h5>
             <p>{comment}</p>
-          </MoviePageComments>
+          </BookPageComments>
         ))}
-      </MoviePageReviews>
-    </MoviePageContainer>
+      </BookPageReviews>
+    </BookPageContainer>
   );
 };
 
-export default MoviePage;
+export default BookPage;
 
-const MoviePageContainer = styled.main`
+const BookPageContainer = styled.main`
   margin-top: 70px;
   width: 100%;
   display: flex;
@@ -100,7 +100,7 @@ const MoviePageContainer = styled.main`
   overflow: hidden;
 `;
 
-const MoviePageMainImage = styled.div`
+const BookPageMainImage = styled.div`
   margin-top: 50px;
   width: 95%;
 
@@ -110,7 +110,7 @@ const MoviePageMainImage = styled.div`
   }
 `;
 
-const MoviePageMovieDetails = styled.div`
+const BookPageMovieDetails = styled.div`
   width: 95%;
 
   h1 {
@@ -126,7 +126,7 @@ const MoviePageMovieDetails = styled.div`
   }
 `;
 
-const MoviePageWatchButton = styled.div`
+const BookPageWatchButton = styled.div`
   margin: 50px 0;
   width: 100%;
   text-align: center;
@@ -145,7 +145,7 @@ const MoviePageWatchButton = styled.div`
   }
 `;
 
-const MoviePageReviews = styled.div`
+const BookPageReviews = styled.div`
   width: 95%;
   display: flex;
   flex-direction: column;
@@ -162,7 +162,7 @@ const MoviePageReviews = styled.div`
   }
 `;
 
-const MoviePageComments = styled.div`
+const BookPageComments = styled.div`
   width: 100%;
   padding-bottom: 7px;
   background-color: white;
@@ -185,14 +185,14 @@ const MoviePageComments = styled.div`
   }
 `;
 
-const MoviePageCommentSubmit = styled.form`
+const BookPageCommentSubmit = styled.form`
   width: 100%;
   padding: 7px;
   display: flex;
   align-items: center;
 `;
 
-const MoviePageCommentInput = styled.input`
+const BookPageCommentInput = styled.input`
   flex-grow: 1;
   padding: 12px;
   font-size: 14px;
@@ -201,7 +201,7 @@ const MoviePageCommentInput = styled.input`
   border-bottom-left-radius: 7px;
 `;
 
-const MoviePageCommentButton = styled.button`
+const BookPageCommentButton = styled.button`
   padding: 12px 20px;
   font-size: 14px;
   font-weight: 600;
