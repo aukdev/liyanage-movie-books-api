@@ -1,42 +1,115 @@
+import { useMutation, useQuery } from "@apollo/client";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import Payment from "../Components/Payment";
 import movieApiData from "../db/movies";
+import { GET_MOVIE } from "../utils/queries";
+import Auth from "../utils/auth";
+import { useEffect } from "react";
+import { ADD_MOVIE_COMMENT } from "../utils/mutations";
 
 const MoviePage = () => {
   const [commentInput, setCommentInput] = useState("");
   const [paymentSet, setPaymentSet] = useState(false);
+  const [canComment, setCanComment] = useState(false);
+
+  const [addMovieComment] = useMutation(ADD_MOVIE_COMMENT);
+
+  const token = Auth.loggedIn() ? Auth.getToken() : null;
+
+  useEffect(() => {
+    if (token) {
+      if (!canComment) {
+        setCanComment(true);
+      }
+    } else {
+      if (canComment) {
+        setCanComment(false);
+      }
+    }
+    // eslint-disable-next-line
+  }, [token]);
+
+  // console.log(canComment);
 
   const { id } = useParams();
-  const { Title, Description, Poster } = movieApiData[id];
+  const { Title, Description, Poster } = movieApiData[1];
 
-  const reviews = [
-    {
-      user: "amila",
-      comment: "This is a awesome movie.",
-      date: "03-12-2022",
-    },
-    {
-      user: "amila",
-      comment: "This is a awesome movie.",
-      date: "03-12-2022",
-    },
-    {
-      user: "amila",
-      comment: "This is a awesome movie.",
-      date: "03-12-2022",
-    },
-    {
-      user: "amila",
-      comment: "This is a awesome movie.",
-      date: "03-12-2022",
-    },
-  ];
+  const [commentFromDB, setCommentFromDB] = useState([]);
 
-  const commentSubmitHandle = (e) => {
+  const { loading, data, error } = useQuery(GET_MOVIE, {
+    variables: { getMovieId: id },
+  });
+
+  useEffect(() => {
+    if (data) {
+      if (data.getMovie.comments) {
+        setCommentFromDB(data.getMovie.comments);
+      }
+    }
+  }, [data]);
+
+  if (error) {
+    console.log(error);
+  }
+
+  if (!loading) {
+    if (!error) {
+      if (!data) {
+        console.log("no data found");
+      }
+    }
+  } else if (loading) {
+    return (
+      <h1
+        style={{
+          width: "100vw",
+          height: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        loading........
+      </h1>
+    );
+  }
+
+  const commentSubmitHandle = async (e) => {
     e.preventDefault();
-    console.log(commentInput);
+
+    const user = Auth.loggedIn() ? Auth.getUserName() : null;
+
+    // console.log(user);
+
+    if (id && commentInput && user) {
+      try {
+        const { data } = await addMovieComment({
+          variables: {
+            movieId: id,
+            user,
+            comment: commentInput,
+          },
+        });
+
+        const setNewComment = data.addMovieComment;
+
+        setCommentFromDB((pre) => {
+          const temp = [...pre];
+          temp.push({
+            user: setNewComment.user,
+            comment: setNewComment.comment,
+          });
+
+          return temp;
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
     setCommentInput("");
   };
 
@@ -44,11 +117,11 @@ const MoviePage = () => {
     <MoviePageContainer>
       {paymentSet && <Payment setPaymentSet={setPaymentSet} />}
       <MoviePageMainImage>
-        <img src={Poster} alt="movie" />
+        <img src={data ? data.getMovie.image : Poster} alt="movie" />
       </MoviePageMainImage>
       <MoviePageMovieDetails>
-        <h1>{Title}</h1>
-        <p>{Description}</p>
+        <h1>{data ? data.getMovie.title : Title}</h1>
+        <p>{data ? data.getMovie.description : Description}</p>
 
         <MoviePageWatchButton>
           <button
@@ -63,27 +136,32 @@ const MoviePage = () => {
 
       <MoviePageReviews>
         <h2>User Reviews</h2>
-        <MoviePageCommentSubmit onSubmit={commentSubmitHandle}>
-          <MoviePageCommentInput
-            type="text"
-            value={commentInput}
-            onChange={(e) => {
-              e.preventDefault();
-              setCommentInput(e.target.value);
-            }}
-            placeholder="Your Comment"
-          />
-          <MoviePageCommentButton type="submit">Comment</MoviePageCommentButton>
-        </MoviePageCommentSubmit>
-        {reviews?.map(({ user, comment, date }, index) => (
-          <MoviePageComments key={index}>
-            <h5>
-              <span>{user}</span>
-              <span>{date}</span>
-            </h5>
-            <p>{comment}</p>
-          </MoviePageComments>
-        ))}
+        {canComment && (
+          <MoviePageCommentSubmit onSubmit={commentSubmitHandle}>
+            <MoviePageCommentInput
+              type="text"
+              value={commentInput}
+              onChange={(e) => {
+                e.preventDefault();
+                setCommentInput(e.target.value);
+              }}
+              placeholder="Your Comment"
+            />
+            <MoviePageCommentButton type="submit">
+              Comment
+            </MoviePageCommentButton>
+          </MoviePageCommentSubmit>
+        )}
+        {data &&
+          commentFromDB?.map(({ user, comment }, index) => (
+            <MoviePageComments key={index}>
+              <h5>
+                <span>{user}</span>
+                <span>{"07-12-2022"}</span>
+              </h5>
+              <p>{comment}</p>
+            </MoviePageComments>
+          ))}
       </MoviePageReviews>
     </MoviePageContainer>
   );

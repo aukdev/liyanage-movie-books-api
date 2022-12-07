@@ -1,42 +1,117 @@
+import { useMutation, useQuery } from "@apollo/client";
+import { useEffect } from "react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import Payment from "../Components/Payment";
 import bookApiData from "../db/books";
+import Auth from "../utils/auth";
+import { ADD_BOOK_COMMENT } from "../utils/mutations";
+import { GET_BOOK } from "../utils/queries";
 
 const BookPage = () => {
   const [commentInput, setCommentInput] = useState("");
   const [paymentSet, setPaymentSet] = useState(false);
+  const [canComment, setCanComment] = useState(false);
+
+  const [addBookComment] = useMutation(ADD_BOOK_COMMENT);
+
+  const token = Auth.loggedIn() ? Auth.getToken() : null;
+
+  useEffect(() => {
+    if (token) {
+      if (!canComment) {
+        setCanComment(true);
+      }
+    } else {
+      if (canComment) {
+        setCanComment(false);
+      }
+    }
+    // eslint-disable-next-line
+  }, [token]);
+
+  // console.log(canComment);
 
   const { id } = useParams();
-  const { Title, Description, Poster } = bookApiData[id];
+  const { Title, Description, Poster } = bookApiData[1];
 
-  const reviews = [
-    {
-      user: "amila",
-      comment: "This is a awesome movie.",
-      date: "03-12-2022",
-    },
-    {
-      user: "amila",
-      comment: "This is a awesome movie.",
-      date: "03-12-2022",
-    },
-    {
-      user: "amila",
-      comment: "This is a awesome movie.",
-      date: "03-12-2022",
-    },
-    {
-      user: "amila",
-      comment: "This is a awesome movie.",
-      date: "03-12-2022",
-    },
-  ];
+  const [commentFromDB, setCommentFromDB] = useState([]);
 
-  const commentSubmitHandle = (e) => {
+  const { loading, data, error } = useQuery(GET_BOOK, {
+    variables: { getBookId: id },
+  });
+
+  useEffect(() => {
+    if (data) {
+      if (data.getBook.comments) {
+        setCommentFromDB(data.getBook.comments);
+      }
+    }
+  }, [data]);
+
+  if (error) {
+    console.log(error);
+  }
+
+  if (!loading) {
+    if (!error) {
+      if (!data) {
+        console.log("no data found");
+      }
+    }
+  } else if (loading) {
+    return (
+      <h1
+        style={{
+          width: "100vw",
+          height: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "white",
+        }}
+      >
+        loading........
+      </h1>
+    );
+  }
+
+  const commentSubmitHandle = async (e) => {
     e.preventDefault();
-    console.log(commentInput);
+
+    const user = Auth.loggedIn() ? Auth.getUserName() : null;
+
+    // console.log(user);
+
+    if (id && commentInput && user) {
+      try {
+        const { data } = await addBookComment({
+          variables: {
+            bookId: id,
+            user,
+            comment: commentInput,
+          },
+        });
+
+        // console.log(data);
+        const setNewComment = data.addBookComment;
+
+        setCommentFromDB((pre) => {
+          const temp = [...pre];
+          temp.push({
+            user: setNewComment.user,
+            comment: setNewComment.comment,
+          });
+
+          return temp;
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
     setCommentInput("");
   };
 
@@ -44,11 +119,11 @@ const BookPage = () => {
     <BookPageContainer>
       {paymentSet && <Payment setPaymentSet={setPaymentSet} />}
       <BookPageMainImage>
-        <img src={Poster} alt="book" />
+        <img src={data ? data.getBook.image : Poster} alt="book" />
       </BookPageMainImage>
       <BookPageMovieDetails>
-        <h1>{Title}</h1>
-        <p>{Description}</p>
+        <h1>{data ? data.getBook.title : Title}</h1>
+        <p>{data ? data.getBook.description : Description}</p>
 
         <BookPageWatchButton>
           <button
@@ -63,27 +138,30 @@ const BookPage = () => {
 
       <BookPageReviews>
         <h2>User Reviews</h2>
-        <BookPageCommentSubmit onSubmit={commentSubmitHandle}>
-          <BookPageCommentInput
-            type="text"
-            value={commentInput}
-            onChange={(e) => {
-              e.preventDefault();
-              setCommentInput(e.target.value);
-            }}
-            placeholder="Your Comment"
-          />
-          <BookPageCommentButton type="submit">Comment</BookPageCommentButton>
-        </BookPageCommentSubmit>
-        {reviews?.map(({ user, comment, date }, index) => (
-          <BookPageComments key={index}>
-            <h5>
-              <span>{user}</span>
-              <span>{date}</span>
-            </h5>
-            <p>{comment}</p>
-          </BookPageComments>
-        ))}
+        {canComment && (
+          <BookPageCommentSubmit onSubmit={commentSubmitHandle}>
+            <BookPageCommentInput
+              type="text"
+              value={commentInput}
+              onChange={(e) => {
+                e.preventDefault();
+                setCommentInput(e.target.value);
+              }}
+              placeholder="Your Comment"
+            />
+            <BookPageCommentButton type="submit">Comment</BookPageCommentButton>
+          </BookPageCommentSubmit>
+        )}
+        {data &&
+          commentFromDB?.map(({ user, comment }, index) => (
+            <BookPageComments key={index}>
+              <h5>
+                <span>{user}</span>
+                <span>{"07-12-2022"}</span>
+              </h5>
+              <p>{comment}</p>
+            </BookPageComments>
+          ))}
       </BookPageReviews>
     </BookPageContainer>
   );

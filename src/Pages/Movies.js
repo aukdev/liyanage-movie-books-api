@@ -1,19 +1,49 @@
+import { useQuery } from "@apollo/client";
 import styled from "styled-components";
 import MovieUnit from "../Components/MovieUnit";
-import moveiApiData from "../db/movies";
+import { GET_MOVIES } from "../utils/queries";
 
 const Movies = () => {
+  const { loading, data, error } = useQuery(GET_MOVIES);
+
+  if (error) {
+    console.log(error);
+  }
+
+  if (!loading) {
+    if (!error) {
+      if (!data) {
+        console.log("no data found");
+      }
+    }
+  } else if (loading) {
+    return (
+      <h1
+        style={{
+          width: "100vw",
+          height: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        loading........
+      </h1>
+    );
+  }
+
   return (
     <MoviesContainer>
       <MoviesBlock>
-        {moveiApiData &&
-          moveiApiData.map(({ Title, Year, imdbID, Poster }, index) => (
+        {data &&
+          data.getMovies.map(({ title, _id, image }) => (
             <MovieUnit
-              Title={Title}
-              Year={Year}
-              Poster={Poster}
-              key={imdbID}
-              index={index}
+              Title={title}
+              Year={2022}
+              Poster={image}
+              key={_id}
+              index={_id}
             />
           ))}
       </MoviesBlock>

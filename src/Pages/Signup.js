@@ -1,15 +1,42 @@
 import { useState } from "react";
 import styled from "styled-components";
 
+import { useMutation } from "@apollo/client";
+import { ADD_USER } from "../utils/mutations";
+import Auth from "../utils/auth";
+import { useHistory } from "react-router-dom";
+
 const Signup = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const signUpButtonHandle = (e) => {
+  const [addUser] = useMutation(ADD_USER);
+  const history = useHistory();
+
+  const signUpButtonHandle = async (e) => {
     e.preventDefault();
     console.log(username, email, password);
+
+    if (username && email && password) {
+      try {
+        const { data } = await addUser({
+          variables: {
+            username,
+            email,
+            password,
+          },
+        });
+
+        // console.log(data);
+        Auth.login(data.addUser.token, data);
+        history.push("/");
+      } catch (err) {
+        console.error(err);
+      }
+    }
   };
+
   return (
     <SignupContainer>
       <SignupBody>

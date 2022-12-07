@@ -1,13 +1,35 @@
 import { useState } from "react";
 import styled from "styled-components";
 
+import { useMutation } from "@apollo/client";
+import { LOGIN_USER } from "../utils/mutations";
+import Auth from "../utils/auth";
+import { useHistory } from "react-router-dom";
+
 const Login = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const loginButtonHandle = (e) => {
+  const [login] = useMutation(LOGIN_USER);
+
+  const history = useHistory();
+
+  const loginButtonHandle = async (e) => {
     e.preventDefault();
-    console.log(username, password);
+
+    if (email && password) {
+      try {
+        const { data } = await login({
+          variables: { email, password },
+        });
+
+        Auth.login(data.login.token, data);
+        // console.log(data);
+        history.push("/");
+      } catch (err) {
+        console.error(err);
+      }
+    }
   };
 
   return (
@@ -15,15 +37,15 @@ const Login = () => {
       <LoginBody>
         <h1>Login</h1>
         <LoginBodyInputBox>
-          <p>Username</p>
+          <p>Email</p>
           <input
-            value={username}
+            value={email}
             onChange={(e) => {
               e.preventDefault();
-              setUsername(e.target.value);
+              setEmail(e.target.value);
             }}
             type="text"
-            placeholder="Username"
+            placeholder="E-mail"
           />
         </LoginBodyInputBox>
         <LoginBodyInputBox>

@@ -1,9 +1,28 @@
+import { useEffect } from "react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
+import Auth from "../utils/auth";
 
 const Header = () => {
   const [menuControl, setMenuControl] = useState(false);
+  const [isLogedIn, setIsLogedIn] = useState(false);
+  const history = useHistory();
+
+  const token = Auth.loggedIn() ? Auth.getToken() : null;
+
+  useEffect(() => {
+    if (token) {
+      if (!isLogedIn) {
+        setIsLogedIn(true);
+      }
+    } else {
+      if (isLogedIn) {
+        setIsLogedIn(false);
+      }
+    }
+    // eslint-disable-next-line
+  }, [token]);
 
   return (
     <HeaderContainer>
@@ -21,7 +40,24 @@ const Header = () => {
             <Link to="/books">Books</Link>
           </li>
           <li>
-            <Link to="/login">Log in</Link>
+            {isLogedIn ? (
+              <p
+                onClick={() => {
+                  Auth.logout();
+                  const token = Auth.loggedIn() ? Auth.getToken() : null;
+                  if (!token) {
+                    if (isLogedIn) {
+                      setIsLogedIn(false);
+                    }
+                  }
+                  history.push("/");
+                }}
+              >
+                Log Out
+              </p>
+            ) : (
+              <Link to="/login">Log in</Link>
+            )}
           </li>
           <li>
             <Link to="/signup">Sign Up</Link>
@@ -56,7 +92,24 @@ const Header = () => {
               <Link to="/books">Books</Link>
             </li>
             <li>
-              <Link to="/login">Log in</Link>
+              {isLogedIn ? (
+                <p
+                  onClick={() => {
+                    Auth.logout();
+                    const token = Auth.loggedIn() ? Auth.getToken() : null;
+                    if (!token) {
+                      if (isLogedIn) {
+                        setIsLogedIn(false);
+                      }
+                    }
+                    history.push("/");
+                  }}
+                >
+                  Log Out
+                </p>
+              ) : (
+                <Link to="/login">Log in</Link>
+              )}
             </li>
             <li>
               <Link to="/signup">Sign Up</Link>
@@ -133,6 +186,19 @@ const HeaderRight = styled.nav`
       align-items: center;
       gap: 25px;
 
+      li {
+        p {
+          font-weight: 600;
+          color: black;
+          transition: all 400ms ease-in;
+          cursor: pointer;
+
+          &:hover {
+            color: white;
+          }
+        }
+      }
+
       a {
         font-weight: 600;
         color: black;
@@ -147,6 +213,19 @@ const HeaderRight = styled.nav`
 
   ul {
     display: none;
+
+    li {
+      p {
+        color: #fca103;
+        font-weight: 600;
+        transition: all 350ms ease-in;
+        cursor: pointer;
+
+        &:hover {
+          color: black;
+        }
+      }
+    }
 
     a {
       color: #fca103;
