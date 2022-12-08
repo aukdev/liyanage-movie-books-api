@@ -15,6 +15,7 @@ import {
   createHttpLink,
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
+import { useState } from "react";
 
 const httpLink = createHttpLink({
   uri: "http://localhost:3001/graphql",
@@ -36,10 +37,12 @@ const client = new ApolloClient({
 });
 
 const App = () => {
+  const [isLogedIn, setIsLogedIn] = useState(false);
+
   return (
     <ApolloProvider client={client}>
       <Router>
-        <Header />
+        <Header isLogedIn={isLogedIn} setIsLogedIn={setIsLogedIn} />
         <Switch>
           <Route path="/movie/:id">
             <MoviePage />
@@ -54,10 +57,10 @@ const App = () => {
             <Books />
           </Route>
           <Route exact path="/login">
-            <Login />
+            <Login isLogedIn={isLogedIn} setIsLogedIn={setIsLogedIn} />
           </Route>
           <Route exact path="/signup">
-            <Signup />
+            <Signup isLogedIn={isLogedIn} setIsLogedIn={setIsLogedIn} />
           </Route>
           <Route exact path="/">
             <Home />

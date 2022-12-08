@@ -4,9 +4,8 @@ import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
 import Auth from "../utils/auth";
 
-const Header = () => {
+const Header = ({ isLogedIn, setIsLogedIn }) => {
   const [menuControl, setMenuControl] = useState(false);
-  const [isLogedIn, setIsLogedIn] = useState(false);
   const history = useHistory();
 
   const token = Auth.loggedIn() ? Auth.getToken() : null;

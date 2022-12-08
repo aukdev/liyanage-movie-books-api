@@ -6,7 +6,7 @@ import { LOGIN_USER } from "../utils/mutations";
 import Auth from "../utils/auth";
 import { useHistory } from "react-router-dom";
 
-const Login = () => {
+const Login = ({ isLogedIn, setIsLogedIn }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -23,8 +23,13 @@ const Login = () => {
           variables: { email, password },
         });
 
-        Auth.login(data.login.token, data);
+        Auth.login(data.login.token, data.login.user.username);
         // console.log(data);
+        if (data) {
+          if (!isLogedIn) {
+            setIsLogedIn(true);
+          }
+        }
         history.push("/");
       } catch (err) {
         console.error(err);

@@ -122,23 +122,25 @@ const MoviePage = () => {
   return (
     <MoviePageContainer>
       {paymentSet && <Payment setPaymentSet={setPaymentSet} />}
-      <MoviePageMainImage>
-        <img src={data ? data.getMovie.image : Poster} alt="movie" />
-      </MoviePageMainImage>
-      <MoviePageMovieDetails>
-        <h1>{data ? data.getMovie.title : Title}</h1>
-        <p>{data ? data.getMovie.description : Description}</p>
+      <MoviePageTopBlock>
+        <MoviePageMainImage>
+          <img src={data ? data.getMovie.image : Poster} alt="movie" />
+        </MoviePageMainImage>
+        <MoviePageMovieDetails>
+          <h1>{data ? data.getMovie.title : Title}</h1>
+          <p>{data ? data.getMovie.description : Description}</p>
 
-        <MoviePageWatchButton>
-          <button
-            onClick={() => {
-              setPaymentSet((pre) => !pre && true);
-            }}
-          >
-            Watch ($5)
-          </button>
-        </MoviePageWatchButton>
-      </MoviePageMovieDetails>
+          <MoviePageWatchButton>
+            <button
+              onClick={() => {
+                setPaymentSet((pre) => !pre && true);
+              }}
+            >
+              Watch ($5)
+            </button>
+          </MoviePageWatchButton>
+        </MoviePageMovieDetails>
+      </MoviePageTopBlock>
 
       <MoviePageReviews>
         <h2>User Reviews</h2>
@@ -184,9 +186,23 @@ const MoviePageContainer = styled.main`
   overflow: hidden;
 `;
 
+const MoviePageTopBlock = styled.div`
+  width: 95%;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 2;
+
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1;
+    gap: 30px;
+    margin-bottom: 50px;
+  }
+`;
+
 const MoviePageMainImage = styled.div`
   margin-top: 50px;
-  width: 95%;
+  width: 100%;
 
   img {
     width: 100%;
@@ -195,7 +211,11 @@ const MoviePageMainImage = styled.div`
 `;
 
 const MoviePageMovieDetails = styled.div`
-  width: 95%;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    margin-top: 50px;
+  }
 
   h1 {
     margin-top: 7px;

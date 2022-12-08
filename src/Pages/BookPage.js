@@ -124,23 +124,26 @@ const BookPage = () => {
   return (
     <BookPageContainer>
       {paymentSet && <Payment setPaymentSet={setPaymentSet} />}
-      <BookPageMainImage>
-        <img src={data ? data.getBook.image : Poster} alt="book" />
-      </BookPageMainImage>
-      <BookPageMovieDetails>
-        <h1>{data ? data.getBook.title : Title}</h1>
-        <p>{data ? data.getBook.description : Description}</p>
 
-        <BookPageWatchButton>
-          <button
-            onClick={() => {
-              setPaymentSet((pre) => !pre && true);
-            }}
-          >
-            Order ($5)
-          </button>
-        </BookPageWatchButton>
-      </BookPageMovieDetails>
+      <BookPageTopBlock>
+        <BookPageMainImage>
+          <img src={data ? data.getBook.image : Poster} alt="book" />
+        </BookPageMainImage>
+        <BookPageMovieDetails>
+          <h1>{data ? data.getBook.title : Title}</h1>
+          <p>{data ? data.getBook.description : Description}</p>
+
+          <BookPageWatchButton>
+            <button
+              onClick={() => {
+                setPaymentSet((pre) => !pre && true);
+              }}
+            >
+              Order ($5)
+            </button>
+          </BookPageWatchButton>
+        </BookPageMovieDetails>
+      </BookPageTopBlock>
 
       <BookPageReviews>
         <h2>User Reviews</h2>
@@ -184,9 +187,23 @@ const BookPageContainer = styled.main`
   overflow: hidden;
 `;
 
+const BookPageTopBlock = styled.div`
+  width: 95%;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 2;
+
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1;
+    gap: 30px;
+    margin-bottom: 50px;
+  }
+`;
+
 const BookPageMainImage = styled.div`
   margin-top: 50px;
-  width: 95%;
+  width: 100%;
 
   img {
     width: 100%;
@@ -195,7 +212,11 @@ const BookPageMainImage = styled.div`
 `;
 
 const BookPageMovieDetails = styled.div`
-  width: 95%;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    margin-top: 50px;
+  }
 
   h1 {
     margin-top: 7px;
