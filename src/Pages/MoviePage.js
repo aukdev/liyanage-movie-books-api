@@ -18,6 +18,8 @@ const MoviePage = () => {
 
   const token = Auth.loggedIn() ? Auth.getToken() : null;
 
+  const { id } = useParams();
+
   useEffect(() => {
     if (token) {
       if (!canComment) {
@@ -29,21 +31,25 @@ const MoviePage = () => {
       }
     }
     // eslint-disable-next-line
-  }, [token]);
+  }, [token, id]);
 
   // console.log(canComment);
-
-  const { id } = useParams();
   const { Title, Description, Poster } = movieApiData[1];
 
   const [commentFromDB, setCommentFromDB] = useState([]);
 
-  const { loading, data, error } = useQuery(GET_MOVIE, {
+  const { loading, data, error, refetch } = useQuery(GET_MOVIE, {
     variables: { getMovieId: id },
   });
 
   useEffect(() => {
+    refetch({ getMovieId: id });
+    // eslint-disable-next-line
+  }, [id]);
+
+  useEffect(() => {
     if (data) {
+      // console.log(data.getMovie.comments);
       if (data.getMovie.comments) {
         setCommentFromDB(data.getMovie.comments);
       }

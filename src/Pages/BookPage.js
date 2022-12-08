@@ -18,6 +18,8 @@ const BookPage = () => {
 
   const token = Auth.loggedIn() ? Auth.getToken() : null;
 
+  const { id } = useParams();
+
   useEffect(() => {
     if (token) {
       if (!canComment) {
@@ -29,21 +31,25 @@ const BookPage = () => {
       }
     }
     // eslint-disable-next-line
-  }, [token]);
+  }, [token, id]);
 
   // console.log(canComment);
-
-  const { id } = useParams();
   const { Title, Description, Poster } = bookApiData[1];
 
   const [commentFromDB, setCommentFromDB] = useState([]);
 
-  const { loading, data, error } = useQuery(GET_BOOK, {
+  const { loading, data, error, refetch } = useQuery(GET_BOOK, {
     variables: { getBookId: id },
   });
 
   useEffect(() => {
+    refetch({ getBookId: id });
+    // eslint-disable-next-line
+  }, [id]);
+
+  useEffect(() => {
     if (data) {
+      // console.log(data.getBook.comments);
       if (data.getBook.comments) {
         setCommentFromDB(data.getBook.comments);
       }
